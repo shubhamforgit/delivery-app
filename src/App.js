@@ -15,17 +15,24 @@ const App = () => {
 
   function signIn(email, password) {
     signInUser(email, password, (response) => {
-      setToken(response.data.token)
+      const bearerToken = response.data.token.replace("Bearer ", "")
+      setToken(bearerToken)
     })
   }
 
+  function signOut() {
+    if (confirm("Are you sure you want to sign out?")) {
+      setToken()
+    }
+  }
+
   if (!token) {
-    return <SignIn setToken={setToken} signIn={signIn} />
+    return <SignIn signIn={signIn} />
   }
 
   return (
     <div>
-      <MainHeader></MainHeader>
+      <MainHeader signOut={signOut}></MainHeader>
       <main>
         <Route path="/past-orders">
           <PastOrders></PastOrders>

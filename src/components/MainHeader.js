@@ -1,8 +1,8 @@
-import { Navbar, Container, Nav } from 'react-bootstrap'
+import { Navbar, Container, Nav, Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
 
-const MainHeader = () => {
+const MainHeader = ( props ) => {
     return (
         <Navbar bg="light" expand="lg">
             <Container>
@@ -16,7 +16,7 @@ const MainHeader = () => {
                         <LinkContainer to="/past-orders">
                             <Nav.Link>My History</Nav.Link>
                         </LinkContainer>
-                        <button>Sign Out</button>
+                        <Button variant="dark" onClick={props.signOut}>Sign Out</Button>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

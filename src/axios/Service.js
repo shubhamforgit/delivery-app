@@ -2,7 +2,8 @@ import axios from "axios"
 
 const ordersBaseURL = "http://localhost:8080/orders/"
 const usersBaseURL = "http://localhost:8080/users/"
-const loginBaseURL = "http://localhost:4000/login/"
+const loginBaseURL = "https://food-app-timesinternet.herokuapp.com/api/delivery_boy/login/"
+
 
 export function getOrders(successCB) {
     axios.get(ordersBaseURL)
