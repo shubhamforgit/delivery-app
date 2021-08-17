@@ -7,6 +7,9 @@ import PastOrders from './components/PastOrders';
 import PresentOrders from './components/PresentOrders';
 import SignIn from './components/SignIn';
 import { signInUser } from './axios/Service';
+import AddStaffDetail from './components/AddStaffDetail';
+import StaffDetail from './components/StaffDetail';
+import { addStyle } from 'react-bootstrap/lib/utils/bootstrapUtils';
 
 
 const App = () => {
