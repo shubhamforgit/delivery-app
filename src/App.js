@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import './App.css';
 import MainHeader from './components/MainHeader';
@@ -13,15 +13,31 @@ const App = () => {
 
   const [token, setToken] = useState();
 
+  useEffect(() => {
+    setToken(getToken())
+  }, [])
+
+  function getToken() {
+    if(typeof window !== 'undefined') {
+      return localStorage.getItem("token")
+    } else {
+      return undefined
+    }
+  }
+
   function signIn(email, password) {
     signInUser(email, password, (response) => {
       const bearerToken = response.data.token.replace("Bearer ", "")
+      localStorage.setItem("token", bearerToken)
       setToken(bearerToken)
     })
   }
 
   function signOut() {
     if (confirm("Are you sure you want to sign out?")) {
+      if(typeof window !== undefined) {
+        localStorage.removeItem('token')
+      }
       setToken()
     }
   }
