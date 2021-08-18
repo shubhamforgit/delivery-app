@@ -7,11 +7,16 @@ const PastOrders = () => {
 
     const [orders, setOrders] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [errorOccured, setErrorOccured] = useState(false)
 
     useEffect(() => {
         getOrders(orders => {
             let PAST_ORDERS = orders.data.filter(order => (order.status === "Delivered") || (order.status === "Cancel"))
             setOrders(PAST_ORDERS)
+            setIsLoading(false)
+        }, () => {
+            console.log("error!");
+            setErrorOccured(true)
             setIsLoading(false)
         })
     }, [])
@@ -21,6 +26,12 @@ const PastOrders = () => {
             <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
             </Spinner>
+        )
+    } else if (errorOccured) {
+        return (
+            <Alert variant="danger">
+                Error Occured! (Get Request Failed)            
+            </Alert>
         )
     } else if (orders.length === 0) {
         return (

@@ -8,12 +8,17 @@ const PresentOrders = (props) => {
 
     const [orders, setOrders] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [errorOccured, setErrorOccured] = useState(false)
 
     useEffect(() => {
 
         getOrders(orders => {
             let PRESENT_ORDERS = orders.data.filter(order => (order.status !== "Delivered") && (order.status !== "Cancel"))
             setOrders(PRESENT_ORDERS)
+            setIsLoading(false)
+        }, () => {
+            console.log("error!");
+            setErrorOccured(true)
             setIsLoading(false)
         })
     }, [])
@@ -24,6 +29,8 @@ const PresentOrders = (props) => {
             let tempOrders = [...orders]
             tempOrders[index].status = status
             setOrders([...tempOrders])
+        }, () => {
+            alert("Could not update the status!")
         })
     }
 
@@ -33,6 +40,12 @@ const PresentOrders = (props) => {
             <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
             </Spinner>
+        )
+    } else if (errorOccured) {
+        return (
+            <Alert variant="danger">
+                Error Occured! (Get Request Failed)            
+            </Alert>
         )
     } else if (orders.length === 0) {
         return (

@@ -33,6 +33,8 @@ const App = () => {
       const bearerToken = response.data.token.replace("Bearer ", "")
       localStorage.setItem("token", bearerToken)
       setToken(bearerToken)
+    }, () => {
+      alert("Could Not Sign In!!")
     })
   }
 
