@@ -36,6 +36,13 @@ const PresentOrders = () => {
                 packageDeliveryStatus: status
             }
         )
+
+            .then(
+                setTimeout(() => {
+                    window.location.href = "/present-orders"
+
+                }, 1500)
+            )
     }
 
     if (isLoading) {
