@@ -21,7 +21,7 @@ const PresentOrders = () => {
     useEffect(() => {
         getOrders(resp => {
             let presentOrders = resp.data.filter(order => {
-                return order.pack.currentPackageDelivery.status !== "DELIVERED"
+                return order.pack.currentPackageDelivery.status !== "DELIVERED" && order.pack.currentPackageDelivery.status !== "CANCELED"
             })
             setPresentOrders(presentOrders)
             setIsLoading(false)
@@ -36,15 +36,6 @@ const PresentOrders = () => {
                 packageDeliveryStatus: status
             }
         )
-            .then(
-                getOrders(resp => {
-                    let presentOrders = resp.data.filter(order => {
-                        return order.pack.currentPackageDelivery.status !== "DELIVERED"
-                    })
-                    setPresentOrders([...presentOrders])
-                })
-            )
-
     }
 
     if (isLoading) {

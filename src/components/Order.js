@@ -33,12 +33,12 @@ const Order = (props) => {
                             Status Saved!
                         </Alert>
                     }
-                    <Card.Subtitle>Items:</Card.Subtitle>
+                    <Card.Subtitle>Order Items:</Card.Subtitle>
                     <Card.Text>{itemString}</Card.Text>
                     <Card.Subtitle>Date: </Card.Subtitle>
                     <Card.Text>{props.order.updatedAt}</Card.Text>
-                    <Card.Subtitle>Total: </Card.Subtitle>
-                    <Card.Text>{props.order.total}</Card.Text>
+                    <Card.Subtitle>Order Total: </Card.Subtitle>
+                    <Card.Text>&#8377;{props.order.total}</Card.Text>
                     <Card.Subtitle>Restaurant Status: </Card.Subtitle>
                     <Card.Text>{props.order.status}</Card.Text>
                     <Card.Subtitle>Delivery Status: </Card.Subtitle>
@@ -56,7 +56,7 @@ const Order = (props) => {
                     }
                     {
                         props.showSave &&
-                        <Button variant="primary" onClick={() => {props.onSave(props.order.pack.currentPackageDelivery.id, status) }}>save</Button>
+                        <Button variant="primary" onClick={() => {setShowAlert(true), props.onSave(props.order.pack.currentPackageDelivery.id, status) }}>Save</Button>
                     }
                     <Button variant="primary" onClick={() => setModalShow(true)}>Expand</Button>
                 </Card.Body>

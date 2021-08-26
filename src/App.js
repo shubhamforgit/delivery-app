@@ -24,6 +24,7 @@ const App = () => {
 
   useEffect(() => {
     setToken(getToken())
+    setUser(localStorage.getItem("user") || undefined)
   }, [])
 
   function getToken() {
@@ -39,6 +40,7 @@ const App = () => {
       console.log(response);
       const bearerToken = response.data.token
       localStorage.setItem("token", bearerToken)
+      localStorage.setItem("user", response.data.user.firstName)
       setToken(bearerToken)
       setUser(response.data.user.firstName)
     }, () => {

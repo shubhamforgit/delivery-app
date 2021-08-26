@@ -14,7 +14,7 @@ const PastOrders = () => {
         .then(resp => {
             console.log(resp.data)
             const pastOrders = resp.data.filter(order => {
-                return order.pack.currentPackageDelivery.status === "DELIVERED"
+                return order.pack.currentPackageDelivery.status === "DELIVERED" || order.pack.currentPackageDelivery.status === "CANCELED"
             })
             setPastOrders(pastOrders)
             setIsLoading(false)
