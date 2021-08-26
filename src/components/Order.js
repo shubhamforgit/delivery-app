@@ -5,59 +5,58 @@ import React, { useState } from 'react';
 const Order = (props) => {
 
     const [modalShow, setModalShow] = useState(false);
-    const [status, setStatus] = useState(props.order.status);
+    const [status, setStatus] = useState(props.order.pack.currentPackageDelivery.status);
     const [showAlert, setShowAlert] = useState(false);
 
     let itemString = "";
-    let items = props.order.items
+    let items = props.order.cart.cartItemList
     items.forEach((item, index) => {
         if (index === items.length - 1) {
-            itemString += " " + item.name + " x" + item.quantity
+            itemString += " " + item.item.name + " x" + item.quantity
         } else {
-            itemString += " " + item.name + " x" + item.quantity + ","
+            itemString += " " + item.item.name + " x" + item.quantity + ","
         }
     })
 
     function statusChange(event) {
+        //alert("status changed!"+event.target.value)
         setStatus(event.target.value)
     }
 
 
     return (
         <div>
-            <Card style={{ width: '18rem', margin: "5px" }}>
+            <Card style={{ width: '18rem', margin: "5px", height: "100%" }}>
                 <Card.Body>
                     {showAlert &&
                         <Alert variant="info" onClose={() => setShowAlert(false)} dismissible>
                             Status Saved!
                         </Alert>
                     }
-
-                    <Card.Subtitle>{props.order.restaurantName}</Card.Subtitle>
-                    <Card.Text>{props.order.restaurantAddress}</Card.Text>
                     <Card.Subtitle>Items:</Card.Subtitle>
                     <Card.Text>{itemString}</Card.Text>
                     <Card.Subtitle>Date: </Card.Subtitle>
-                    <Card.Text>{props.order.date}</Card.Text>
+                    <Card.Text>{props.order.updatedAt}</Card.Text>
                     <Card.Subtitle>Total: </Card.Subtitle>
                     <Card.Text>{props.order.total}</Card.Text>
-                    <Card.Subtitle>Status: </Card.Subtitle>
+                    <Card.Subtitle>Restaurant Status: </Card.Subtitle>
+                    <Card.Text>{props.order.status}</Card.Text>
+                    <Card.Subtitle>Delivery Status: </Card.Subtitle>
                     <Card.Text>{status}</Card.Text>
                     {
                         props.showStatusDropdown &&
                         <Form.Select aria-label="Default select example" onChange={statusChange}>
                             <option>Change Status</option>
-                            <option value="Assigned">Assigned</option>
-                            <option value="Reaching Restaurant">Reaching Restaurant</option>
-                            <option value="Picked Up">Picked Up</option>
-                            <option value="On The Way">On The Way</option>
-                            <option value="Delivered" >Delivered</option>
-                            <option value="Cancel">Cancel</option>
+                            {
+                                props.order.pack.currentPackageDelivery.next?.map((item, index) => {
+                                    return <option key={index} value={item}>{item}</option>
+                                })
+                            }
                         </Form.Select>
                     }
                     {
                         props.showSave &&
-                        <Button variant="primary" onClick={() => { setShowAlert(true); props.onSave(props.order.id, status) }}>save</Button>
+                        <Button variant="primary" onClick={() => {props.onSave(props.order.pack.currentPackageDelivery.id, status) }}>save</Button>
                     }
                     <Button variant="primary" onClick={() => setModalShow(true)}>Expand</Button>
                 </Card.Body>

@@ -1,39 +1,51 @@
+import axios from "axios"
 import { useEffect, useState } from "react"
-import { Alert, CardGroup, Spinner } from "react-bootstrap"
-import { getOrders, updateStatus } from "../axios/Service"
-import Order from "../components/Order"
+import { CardGroup, Spinner, Alert } from "react-bootstrap"
+import Order from "./Order"
 
+const PresentOrders = () => {
 
-const PresentOrders = (props) => {
-
-    const [orders, setOrders] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [presentOrders, setPresentOrders] = useState([])
     const [errorOccured, setErrorOccured] = useState(false)
 
-    useEffect(() => {
+    function getOrders(successCB) {
+        axios.get("https://food-app-timesinternet.herokuapp.com/api/delivery_boy/package")
+            .then(successCB)
+            .catch((err) => {
+                setIsLoading(false)
+                setErrorOccured(true)
+            })
+    }
 
-        getOrders(orders => {
-            let PRESENT_ORDERS = orders.data.filter(order => (order.status !== "Delivered") && (order.status !== "Cancel"))
-            setOrders(PRESENT_ORDERS)
+    useEffect(() => {
+        getOrders(resp => {
+            let presentOrders = resp.data.filter(order => {
+                return order.pack.currentPackageDelivery.status !== "DELIVERED"
+            })
+            setPresentOrders(presentOrders)
             setIsLoading(false)
-        }, () => {
-            console.log("error!");
-            setErrorOccured(true)
-            setIsLoading(false)
+            console.log(resp);
         })
     }, [])
 
-    function changeStatus(id, status) {
-        updateStatus(id, status, () => {
-            let index = orders.findIndex(order => order.id === id)
-            let tempOrders = [...orders]
-            tempOrders[index].status = status
-            setOrders([...tempOrders])
-        }, () => {
-            alert("Could not update the status!")
-        })
-    }
+    function onSave(id, status) {
+        axios.patch("https://food-app-timesinternet.herokuapp.com/api/delivery_boy/package/status",
+            {
+                packageDeliveryId: id,
+                packageDeliveryStatus: status
+            }
+        )
+            .then(
+                getOrders(resp => {
+                    let presentOrders = resp.data.filter(order => {
+                        return order.pack.currentPackageDelivery.status !== "DELIVERED"
+                    })
+                    setPresentOrders([...presentOrders])
+                })
+            )
 
+    }
 
     if (isLoading) {
         return (
@@ -41,31 +53,27 @@ const PresentOrders = (props) => {
                 <span className="visually-hidden">Loading...</span>
             </Spinner>
         )
-    } else if (errorOccured) {
+    }
+    else if (errorOccured) {
+        return <Alert variant="danger">
+            Error Occured! (Get Request Failed)
+        </Alert>
+    }
+    else {
         return (
-            <Alert variant="danger">
-                Error Occured! (Get Request Failed)            
-            </Alert>
-        )
-    } else if (orders.length === 0) {
-        return (
-            <Alert variant="info">
-                No Orders Assigned            
-            </Alert>
+            <div>
+                <CardGroup style={{ justifyContent: "center" }}>
+
+                    {
+                        presentOrders.map((order, index) => {
+                            return <Order onSave={onSave} order={order} key={index} showStatusDropdown={true} showSave={true}></Order>
+                        })
+                    }
+                </CardGroup>
+            </div>
         )
     }
-    return (
-        <div>
-            <CardGroup style={{ justifyContent: "center" }}>
-                {
-                    orders.map((order, index) => {
-                        return <Order order={order} onSave={changeStatus} key={index} showSave={true} showStatusDropdown={true} />
-                    })
-                }
-            </CardGroup>
-        </div>
 
-    )
 }
 
 export default PresentOrders

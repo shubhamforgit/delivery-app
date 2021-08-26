@@ -10,7 +10,12 @@ import { signInUser } from './axios/Service';
 import AddStaffDetail from './components/AddStaffDetail';
 import StaffDetail from './components/StaffDetail';
 import { addStyle } from 'react-bootstrap/lib/utils/bootstrapUtils';
+import HomePage from './components/HomePage';
+import axios from 'axios';
 
+if (typeof window !== 'undefined' && localStorage.getItem('token')) {
+  axios.defaults.headers.common['Authorization'] = localStorage.getItem('token');
+}
 
 const App = () => {
 
@@ -32,7 +37,7 @@ const App = () => {
   function signIn(email, password) {
     signInUser(email, password, (response) => {
       console.log(response);
-      const bearerToken = response.data.token.replace("Bearer ", "")
+      const bearerToken = response.data.token
       localStorage.setItem("token", bearerToken)
       setToken(bearerToken)
       setUser(response.data.user.firstName)
@@ -52,30 +57,9 @@ const App = () => {
 
   if (!token) {
     return <SignIn signIn={signIn} />
+  } else {
+    return <HomePage signOut={signOut} user={user}></HomePage>
   }
-
-  return (
-    <div>
-      <MainHeader signOut={signOut} name={user}></MainHeader>
-      <main>
-        <Route path="/past-orders">
-          <PastOrders></PastOrders>
-        </Route>
-        <Route path="/present-orders">
-          <PresentOrders></PresentOrders>
-        </Route>
-        <Route path="/sign-in">
-          <SignIn></SignIn>
-        </Route>
-        <Route exact path="/">
-          <Redirect to="/present-orders" />
-        </Route>
-        <Route  path="*">
-          <Redirect to="/present-orders" />
-        </Route>
-      </main>
-    </div>
-  )
 
 };
 

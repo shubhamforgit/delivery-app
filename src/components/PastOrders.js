@@ -1,23 +1,27 @@
-import { useEffect, useState } from "react"
-import { Alert, CardGroup, Spinner } from "react-bootstrap"
-import { getOrders } from "../axios/Service"
-import Order from "./Order"
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { CardGroup, Spinner, Alert } from "react-bootstrap";
+import Order from "./Order";
 
 const PastOrders = () => {
 
-    const [orders, setOrders] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [pastOrders, setPastOrders] = useState([])
     const [errorOccured, setErrorOccured] = useState(false)
 
     useEffect(() => {
-        getOrders(orders => {
-            let PAST_ORDERS = orders.data.filter(order => (order.status === "Delivered") || (order.status === "Cancel"))
-            setOrders(PAST_ORDERS)
+        axios.get("https://food-app-timesinternet.herokuapp.com/api/delivery_boy/package")
+        .then(resp => {
+            console.log(resp.data)
+            const pastOrders = resp.data.filter(order => {
+                return order.pack.currentPackageDelivery.status === "DELIVERED"
+            })
+            setPastOrders(pastOrders)
             setIsLoading(false)
-        }, () => {
-            console.log("error!");
+        })
+        .catch((err) => {
+            setIsLoading(false)
             setErrorOccured(true)
-            setIsLoading(false)
         })
     }, [])
 
@@ -27,30 +31,27 @@ const PastOrders = () => {
                 <span className="visually-hidden">Loading...</span>
             </Spinner>
         )
-    } else if (errorOccured) {
+    } 
+    else if (errorOccured) {
+        return <Alert variant="danger">
+            Error Occured! (Get Request Failed)
+        </Alert>
+    } 
+    else {
         return (
-            <Alert variant="danger">
-                Error Occured! (Get Request Failed)            
-            </Alert>
-        )
-    } else if (orders.length === 0) {
-        return (
-            <Alert variant="info">
-                No History Available            
-            </Alert>
+            <div>
+                <CardGroup style={{ justifyContent: "center" }}>
+    
+                {
+                    pastOrders.map((order, index) => {
+                        return <Order order={order} key={index}></Order>
+                    })
+                }
+                </CardGroup>
+            </div>
         )
     }
-
-    return (
-
-        <CardGroup style={{ justifyContent: "center" }}>
-            {
-                orders.map((order, index) => {
-                    return <Order order={order} key={index} showSave={false} showStatusDropdown={false} />
-                })
-            }
-        </CardGroup>
-    )
+    
 }
 
 export default PastOrders
