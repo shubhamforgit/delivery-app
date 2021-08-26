@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 const Order = (props) => {
 
     const [modalShow, setModalShow] = useState(false);
-    const [status, setStatus] = useState(props.order.pack.currentPackageDelivery.status);
+    const [status, setStatus] = useState(props.order.pack.currentPackageDelivery.stage);
     const [showAlert, setShowAlert] = useState(false);
 
     let itemString = "";
@@ -45,11 +45,11 @@ const Order = (props) => {
                     <Card.Text>{status}</Card.Text>
                     {
                         props.showStatusDropdown &&
-                        <Form.Select aria-label="Default select example" onChange={statusChange}>
+                        <Form.Select style={{marginBottom: "1rem"}} aria-label="Default select example" onChange={statusChange}>
                             <option>Change Status</option>
                             {
                                 props.order.pack.currentPackageDelivery.next?.map((item, index) => {
-                                    return <option key={index} value={item}>{item}</option>
+                                    return <option key={index} value={item.value}>{item.name}</option>
                                 })
                             }
                         </Form.Select>
@@ -58,7 +58,7 @@ const Order = (props) => {
                         props.showSave &&
                         <Button variant="primary" onClick={() => {setShowAlert(true), props.onSave(props.order.pack.currentPackageDelivery.id, status) }}>Save</Button>
                     }
-                    <Button variant="primary" onClick={() => setModalShow(true)}>Expand</Button>
+                    <Button style={{marginLeft: "0.5rem"}} variant="primary" onClick={() => setModalShow(true)}>Expand</Button>
                 </Card.Body>
             </Card>
             <OrderDetailPopup
