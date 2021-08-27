@@ -36,8 +36,11 @@ const PastOrders = () => {
         return <Alert variant="danger">
             Error Occured! (Get Request Failed)
         </Alert>
-    } 
-    else {
+    } else if(pastOrders.length === 0) {
+        return <Alert variant="info">
+            No Orders To Show
+        </Alert>
+    } else {
         return (
             <div>
                 <CardGroup style={{ justifyContent: "center" }}>
